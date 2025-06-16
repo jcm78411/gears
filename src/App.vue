@@ -38,6 +38,7 @@ onMounted(() => {
     allowEscapeKey: false
   })
 })
+
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeydown);
 });
@@ -57,7 +58,6 @@ const restartEverything = () => {
   finalAngles.value = {}
   gearCounts.value = {}
 
-  // También puedes forzar el reinicio visual si es necesario:
   // window.location.reload()
 }
 
@@ -78,14 +78,15 @@ const captureInitialAngles = () => {
       2: Math.round(finalAngles.value[2]) % 360,
       3: Math.round(finalAngles.value[3]) % 360
     }
-    console.log('📌 Posiciones iniciales exactas guardadas:', initialAngles.value)
+    console.log('Posiciones iniciales exactas guardadas:', initialAngles.value)
   } else {
-    console.warn('⚠️ No se pudieron capturar todas las posiciones.')
+    console.warn('No se pudieron capturar todas las posiciones.')
   }
 }
 
 const finalAngles = ref({})
 const gearCounts = ref({})
+const gearIndexs = ref({})
 
 // const toggleAnimation = () => {
 //   if (!isPlaying.value) {
@@ -97,7 +98,7 @@ const gearCounts = ref({})
 // }
 const toggleAnimation = () => {
   if (!mcmValido.value) {
-    console.warn("🚫 No se puede iniciar la animación: MCM inválido.")
+    console.warn("No se puede iniciar la animación: MCM inválido.")
     return
   }
 
@@ -112,17 +113,91 @@ const toggleAnimation = () => {
 
 let alignmentCheckTimeout
 
+// const handleFinalAngle = ({ gearIndex, currentAngle, count }) => {
+//   finalAngles.value[gearIndex] = currentAngle
+//   gearCounts.value[gearIndex] = count
+//   console.log("VALOR DEL GEAR INDEX: =============>>>> " + gearIndex);
+
+//   if (gearIndex % 3 === 0) {
+//     rotationCount.value = count
+//     console.log("VALOR DEL COUNT: =============>>>> " + count);
+//     if (count % 3 === 0) {
+//       haDadoVuelta.value = true
+//       restartEverything()
+//     }
+//   }
+
+//   clearTimeout(alignmentCheckTimeout)
+//   alignmentCheckTimeout = setTimeout(() => {
+//     checkIfTriangleAligned()
+//   }, 10)
+//   alignmentCheckTimeout
+// }
+// const handleFinalAngle = ({ gearIndex, currentAngle, count }) => {
+//   finalAngles.value[gearIndex] = currentAngle
+//   gearCounts.value[gearIndex] = count
+//   gearIndexs.value[gearIndex] = gearIndex
+//   console.log("VALOR DEL GEAR INDEX: =============>>>> " + gearIndex)
+
+//   const dientesActual = gearTeeth.value[gearIndex + 1] // gearIndex comienza en 1
+//   const mcmTotal = lcmArray(gearTeeth.value)
+//   const vueltasNecesarias = mcmTotal / dientesActual
+
+//   rotationCount.value = count
+//   console.log(`⚙️ Gear ${gearIndex}: vueltas = ${count}, necesarias = ${vueltasNecesarias}`)
+//   Swal.fire({
+//     title: `⚙️ Engranaje ${gearIndex}`,
+//     html: `
+//     <p><strong>Vueltas dadas:</strong> ${count}</p>
+//     <p><strong>Vueltas necesarias:</strong> ${vueltasNecesarias}</p>
+//   `,
+//     icon: 'info',
+//     confirmButtonText: 'Continuar',
+//     allowOutsideClick: false,
+//     allowEscapeKey: false
+//   })
+
+
+//   if (count === vueltasNecesarias) {
+//     haDadoVuelta.value = true
+//     restartEverything()
+//   }
+
+//   clearTimeout(alignmentCheckTimeout)
+//   alignmentCheckTimeout = setTimeout(() => {
+//     checkIfTriangleAligned()
+//   }, 10)
+// }
 const handleFinalAngle = ({ gearIndex, currentAngle, count }) => {
   finalAngles.value[gearIndex] = currentAngle
   gearCounts.value[gearIndex] = count
+  gearIndexs.value[gearIndex] = gearIndex
+  console.log("VALOR DEL GEAR INDEX: =============>>>> " + gearIndex)
 
-  if (gearIndex % 3 === 0) {
+  if (gearIndex === 3) {
+    const dientesActual = gearTeeth.value[gearIndex - 1] 
+    const mcmTotal = lcmArray(gearTeeth.value)
+    const vueltasNecesarias = mcmTotal / dientesActual
+
     rotationCount.value = count
-    console.log(count);
-      if (count % 3 === 0) {
-        haDadoVuelta.value = true
-        restartEverything()
-      }
+
+    // Swal.fire({
+    //   title: `⚙️ Engranaje ${gearIndex}`,
+    //   html: `
+    //     <p><strong>Vueltas dadas:</strong> ${count}</p>
+    //     <p><strong>Vueltas necesarias:</strong> ${vueltasNecesarias}</p>
+    //   `,
+    //   icon: 'info',
+    //   confirmButtonText: 'Continuar',
+    //   allowOutsideClick: false,
+    //   allowEscapeKey: false
+    // })
+
+    if (count === vueltasNecesarias) {
+      isPlaying.value = false
+      haDadoVuelta.value = true
+      restartEverything()
+    }
   }
 
   clearTimeout(alignmentCheckTimeout)
@@ -147,10 +222,10 @@ const checkIfTriangleAligned = () => {
 
   if (allAligned) {
     isPlaying.value = false
-    console.log('✅ Triángulo regresó a su forma original.')
+    console.log('Triángulo regresó a su forma original.')
     setTimeout(() => {
-    restartEverything()
-  }, 500)
+      restartEverything()
+    }, 700)
   }
 }
 
@@ -167,7 +242,7 @@ const engranajes = [
 ]
 
 const offsetLine1 = [6, 6, 6]
-const offsetLine2 = [7, 10, -45] 
+const offsetLine2 = [7, 10, -45]
 
 const angulosInternos = [48, 110, 22]
 
@@ -175,7 +250,7 @@ const calcularAngulo = (x1, y1, x2, y2) => {
   return (Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI + 360) % 360
 }
 
-const sentidos = [true, false, true] 
+const sentidos = [true, false, true]
 
 const lineAngles = computed(() => {
   return engranajes.map((engranaje, i) => {
@@ -221,7 +296,7 @@ const stopHolding = () => {
   restartEverything()
 }
 
-const gearTeeth = ref([16, 9, 41])
+const gearTeeth = ref([15, 12, 20])
 
 const mcmValido = ref(true)
 
@@ -336,7 +411,7 @@ const velocidad = ref(1)
       </button>
       <div class="velocidad-control">
         <label for="velocidadSlider">Velocidad:</label>
-        <input type="range" id="velocidadSlider" min="0.5" max="5" step="0.1" v-model.number="velocidad" title="Ajustar la velocidad" />
+        <input type="range" id="velocidadSlider" min="0" max="1.5" step="0.1" v-model.number="velocidad" title="Ajustar la velocidad" />
         <span>{{ velocidad.toFixed(1) }}x</span>
       </div>
 
@@ -348,6 +423,10 @@ const velocidad = ref(1)
         <label class="eng" :for="'dientes-' + index">Engranaje {{ index + 1 }}:</label>
         <input type="number" :id="'dientes-' + index" v-model.number="gearTeeth[index]" min="1" step="1" />
       </div>
+    </div>
+
+    <div class="valor-esperado">
+
     </div>
 
     <!-- Alerta por MCM inválido -->

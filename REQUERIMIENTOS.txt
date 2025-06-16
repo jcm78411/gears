@@ -1,15 +1,18 @@
-1. Alinear mejor el triangulo ----------------------> EN DESARROLLO
+1. Alinear mejor el triangulo ----------------------> HECHO ✅✅✅
                                                       
-2. Cambiar a numero de dientes customizado ---------> HECHO
+2. Cambiar a numero de dientes customizado ---------> HECHO ✅✅✅
                                                       
-3. Una vuelta por cada click -----------------------> DESCARTADO
+3. Una vuelta por cada click -----------------------> DESCARTADO ✅✅✅
                                                       
-4. Evento mousedown para movimiento fluido ---------> HECHO
+4. Evento mousedown para movimiento fluido ---------> HECHO ✅✅✅
                                                       
-5. Modo automatico ---------------------------------> HECHO
+5. Modo automatico ---------------------------------> HECHO ✅✅✅
 
-6. Aumentar la velocidad ---------------------------> HECHO
+6. Aumentar la velocidad ---------------------------> HECHO ✅✅✅
 
 7. mostrar el calculo de (nvueltasE1 = MCM / #dientesE1)
+ el numero de vueltas de E3 = mcm del total de dientes de cada engranaje / su # de dientesE3
+ ahi se deberia detener la animacion ----------------> HECHO ✅✅✅
 
-8. 
+8. Añadir modo manual, es decir, por cada click se gire un engranaje: 
+    click 1 -> E1, click 2 -> E2, click 3 ->E3, click 4 -> E1...
