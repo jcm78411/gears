@@ -110,28 +110,25 @@ const toggleAnimation = () => {
   isPlaying.value = !isPlaying.value
 }
 
-
 let alignmentCheckTimeout
 
 const handleFinalAngle = ({ gearIndex, currentAngle, count }) => {
   finalAngles.value[gearIndex] = currentAngle
   gearCounts.value[gearIndex] = count
-  // rotationCount.value = count
 
-  // handleRotationComplete(count);
-
-  if (gearIndex === 3) {
+  if (gearIndex % 3 === 0) {
     rotationCount.value = count
     console.log(count);
-      if (count >= 3) {
+      if (count % 3 === 0) {
         haDadoVuelta.value = true
+        restartEverything()
       }
   }
 
   clearTimeout(alignmentCheckTimeout)
   alignmentCheckTimeout = setTimeout(() => {
     checkIfTriangleAligned()
-  }, 100)
+  }, 10)
 }
 
 const checkIfTriangleAligned = () => {
@@ -224,26 +221,22 @@ const stopHolding = () => {
   restartEverything()
 }
 
-const gearTeeth = ref([15, 9, 45])
+const gearTeeth = ref([16, 9, 41])
 
 const mcmValido = ref(true)
 
-// Función auxiliar para calcular el MCD
 function gcd(a, b) {
   return b === 0 ? a : gcd(b, a % b)
 }
 
-// Función auxiliar para calcular el MCM de dos números
 function lcm(a, b) {
   return (a * b) / gcd(a, b)
 }
 
-// MCM de un array de números
 function lcmArray(arr) {
   return arr.reduce((acc, val) => lcm(acc, val))
 }
 
-// Verifica si hay un MCM válido cada vez que cambian los dientes
 watch(gearTeeth, (newTeeth) => {
   console.log("Cantidad de dientes actualizada:", newTeeth)
 
@@ -266,7 +259,7 @@ watch(gearTeeth, (newTeeth) => {
   }
 })
 
-const velocidad = ref(1) // 1x por defecto
+const velocidad = ref(1)
 
 </script>
 
