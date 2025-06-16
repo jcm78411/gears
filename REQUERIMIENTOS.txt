@@ -1,0 +1,11 @@
+1. Alinear mejor el triangulo ----------------------> EN DESARROLLO
+                                                      
+2. Cambiar a numero de dientes customizado ---------> HECHO
+                                                      
+3. Una vuelta por cada click -----------------------> DESCARTADO
+                                                      
+4. Evento mousedown para movimiento fluido ---------> HECHO
+                                                      
+5. Modo automatico ---------------------------------> HECHO
+
+6. Aumentar la velocidad ---------------------------> 
