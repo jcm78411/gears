@@ -307,11 +307,19 @@ const velocidad = ref(1) // 1x por defecto
 
     <!-- Controles -->
     <div class="controls">
-      <!-- Botón presionado (mantener pulsado para reproducir, soltar para reiniciar) -->
-      <button class="play-pause-btn" @mousedown="startHolding" @mouseup="stopHolding" @mouseleave="stopHolding"
-        @touchstart.prevent="startHolding" @touchend="stopHolding" title="Mantener pulsado" ref="playPauseBtn">
-        ⏭️
-      </button>
+  <!-- Botón presionado (mantener pulsado para reproducir, soltar para reiniciar) -->
+  <div class="control">
+    <button  
+            @mousedown="startHolding" 
+            @mouseup="stopHolding" 
+            @mouseleave="stopHolding"
+            @touchstart.prevent="startHolding" 
+            @touchend="stopHolding" 
+            title="Mantener pulsado" 
+            ref="playPauseBtn">
+      ⏭️
+    </button>
+  </div>
 
       <!-- Botón alternativo manual -->
       <button class="play-pause-btn" @click="toggleAnimation" title="Iniciar animación">
