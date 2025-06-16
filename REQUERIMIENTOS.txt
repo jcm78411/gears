@@ -8,4 +8,8 @@
                                                       
 5. Modo automatico ---------------------------------> HECHO
 
-6. Aumentar la velocidad ---------------------------> 
+6. Aumentar la velocidad ---------------------------> HECHO
+
+7. mostrar el calculo de (nvueltasE1 = MCM / #dientesE1)
+
+8. 

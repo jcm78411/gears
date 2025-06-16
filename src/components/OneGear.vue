@@ -90,18 +90,14 @@ const updateRotationCount = () => {
       currentAngle: normalizedangle,
       gearIndex: props.gearIndex
     })
-
-    // console.log('Emitiendo angulo final con valor:', angle.value +
-    //   "\n vuelta: " + localRotationCount.value +
-    //   "\n Engranaje: " + props.gearIndex)
   }
+
+}
   watch(() => props.isPlaying, (newVal) => {
     if (!newVal) {
       angle.value = (Math.round(angle.value / 360) * 360) + props.manualOffset;
     }
   });
-}
-
 let animationFrameId
 
 onMounted(() => {

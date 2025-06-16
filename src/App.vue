@@ -1,5 +1,6 @@
 <script setup>
 import OneGear from './components/OneGear.vue'
+import Swal from 'sweetalert2'
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 
 const angleDiff = (a, b) => Math.abs(((a - b + 180 + 360) % 360) - 180)
@@ -19,6 +20,24 @@ onMounted(() => {
   window.addEventListener('keydown', handleKeydown);
 });
 
+onMounted(() => {
+  Swal.fire({
+    title: 'Objetivo del Juego',
+    html: `
+      <p>Descifrar cuántas vueltas tiene que dar el engranaje para obtener nuevamente el triángulo.</p>
+      <ul style="text-align: left;">
+        <li>Hay 3 engranajes, cada uno con un número estipulado de dientes.</li>
+        <li>Cada vez que se hace clic, el engranaje rota un diente.</li>
+      </ul>
+      <p><strong>Estrategia:</strong> Lograr que el triángulo se forme nuevamente dando clic.</p>
+      <p><strong>¡Obtén el triángulo!</strong><br>¡Jugar!</p>
+    `,
+    icon: 'info',
+    confirmButtonText: 'Entendido',
+    allowOutsideClick: false,
+    allowEscapeKey: false
+  })
+})
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeydown);
 });
@@ -307,19 +326,11 @@ const velocidad = ref(1) // 1x por defecto
 
     <!-- Controles -->
     <div class="controls">
-  <!-- Botón presionado (mantener pulsado para reproducir, soltar para reiniciar) -->
-  <div class="control">
-    <button  
-            @mousedown="startHolding" 
-            @mouseup="stopHolding" 
-            @mouseleave="stopHolding"
-            @touchstart.prevent="startHolding" 
-            @touchend="stopHolding" 
-            title="Mantener pulsado" 
-            ref="playPauseBtn">
-      ⏭️
-    </button>
-  </div>
+      <!-- Botón presionado (mantener pulsado para reproducir, soltar para reiniciar) -->
+      <button class="play-pause-btn" @mousedown="startHolding" @mouseup="stopHolding" @mouseleave="stopHolding"
+        @touchstart.prevent="startHolding" @touchend="stopHolding" title="Mantener pulsado" ref="playPauseBtn">
+        ⏭️
+      </button>
 
       <!-- Botón alternativo manual -->
       <button class="play-pause-btn" @click="toggleAnimation" title="Iniciar animación">
