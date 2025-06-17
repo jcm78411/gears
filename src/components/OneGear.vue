@@ -57,6 +57,7 @@ const props = defineProps({
 
 const emit = defineEmits(['rotation-complete', 'final-angle'])
 
+
 let animationStartTime = null
 let lastRotationTime = null
 
@@ -75,6 +76,11 @@ const updateRotationCount = () => {
   const rotationDuration = props.duration * 1000
   const deltaAngle = (props.clockwise ? 1 : -1) * (360 * (elapsedTime / rotationDuration))
   angle.value = (angle.value + deltaAngle) % 360
+    console.log(`Engranaje ${props.size}:`, {
+    elapsedTime,
+    angle: angle.value,
+    rotationCount: props.rotationCount,
+  });
 
   if (elapsedTime >= rotationDuration) {
     lastRotationTime = now
@@ -91,7 +97,6 @@ const updateRotationCount = () => {
       gearIndex: props.gearIndex
     })
   }
-
 }
   watch(() => props.isPlaying, (newVal) => {
     if (!newVal) {
@@ -99,6 +104,11 @@ const updateRotationCount = () => {
     }
   });
 let animationFrameId
+
+const normalizeAngle = (angle) => ((angle % 360) + 360) % 360;
+
+// Example Usage:
+angle.value = normalizeAngle(angle.value);
 
 onMounted(() => {
   const animate = () => {
@@ -131,6 +141,28 @@ const positionStyle = computed(() => ({
 const angleComputed = computed(() => {
   return (angle.value - props.manualOffset) % 360
 })
+
+watch(() => props.isPlaying, (isPlaying) => {
+  if (!isPlaying) {
+    angle.value = normalizeAngle(angle.value);
+    console.log(`Engranaje pausado:`, {
+      angle: angle.value,
+      rotationCount: props.rotationCount,
+    });
+  }
+});
+
+let lastUpdateTime = 0;
+
+const animate = () => {
+  const now = performance.now();
+  if (now - lastUpdateTime > 16) { // Roughly 60fps
+    updateRotationCount();
+    lastUpdateTime = now;
+  }
+  animationFrameId = requestAnimationFrame(animate);
+};
+
 </script>
 
 <style scoped>

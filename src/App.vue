@@ -87,87 +87,67 @@ const captureInitialAngles = () => {
 const finalAngles = ref({})
 const gearCounts = ref({})
 const gearIndexs = ref({})
+const MAX_VUELTAS = 100;
 
-// const toggleAnimation = () => {
-//   if (!isPlaying.value) {
-//     captureInitialTriangleAngles()
-//     rotationCount.value = 0
-//     haDadoVuelta.value = false
-//   }
-//   isPlaying.value = !isPlaying.value
-// }
+const validarVueltas = () => {
+  const mcm = lcmArray(gearTeeth.value);
+  console.log("MCM calculado:", mcm);
+
+  // Validar que todos los engranajes tengan más de 0 dientes
+  if (gearTeeth.value.some(dientes => dientes <= 0)) {
+    console.warn("Todos los engranajes deben tener más de 0 dientes.");
+    Swal.fire({
+      title: 'Error',
+      text: 'Todos los engranajes deben tener más de 0 dientes.',
+      icon: 'error',
+      confirmButtonText: 'Entendido',
+    });
+    return false;
+  }
+
+  // Calcular vueltas necesarias por engranaje
+  const vueltasPorEngranaje = gearTeeth.value.map(dientes => mcm / dientes);
+  console.log("Vueltas necesarias por engranaje:", vueltasPorEngranaje);
+
+  // Verificar si alguna vuelta excede el límite permitido
+  if (vueltasPorEngranaje.some(vueltas => vueltas > MAX_VUELTAS)) {
+    console.warn("Advertencia: Algún engranaje excede el máximo de vueltas permitidas.");
+    Swal.fire({
+      title: 'Advertencia',
+      html: `
+        <p>Las vueltas necesarias para algunos engranajes exceden el límite permitido (${MAX_VUELTAS} vueltas).</p>
+        <p>Por favor, ajusta el número de dientes para continuar.</p>
+      `,
+      icon: 'warning',
+      confirmButtonText: 'Entendido',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    });
+    return false;
+  }
+
+  console.log("Validación exitosa: el MCM y las vueltas son aceptables.");
+  return true;
+};
+
 const toggleAnimation = () => {
-  if (!mcmValido.value) {
-    console.warn("No se puede iniciar la animación: MCM inválido.")
-    return
+  // Validar antes de iniciar la animación
+  if (!validarVueltas()) {
+   restartEverything() 
+    return;
   }
 
   if (!isPlaying.value) {
-    captureInitialTriangleAngles()
-    rotationCount.value = 0
-    haDadoVuelta.value = false
+    captureInitialTriangleAngles();
+    rotationCount.value = 0;
+    haDadoVuelta.value = false;
   }
 
-  isPlaying.value = !isPlaying.value
-}
+  isPlaying.value = !isPlaying.value;
+};
 
 let alignmentCheckTimeout
 
-// const handleFinalAngle = ({ gearIndex, currentAngle, count }) => {
-//   finalAngles.value[gearIndex] = currentAngle
-//   gearCounts.value[gearIndex] = count
-//   console.log("VALOR DEL GEAR INDEX: =============>>>> " + gearIndex);
-
-//   if (gearIndex % 3 === 0) {
-//     rotationCount.value = count
-//     console.log("VALOR DEL COUNT: =============>>>> " + count);
-//     if (count % 3 === 0) {
-//       haDadoVuelta.value = true
-//       restartEverything()
-//     }
-//   }
-
-//   clearTimeout(alignmentCheckTimeout)
-//   alignmentCheckTimeout = setTimeout(() => {
-//     checkIfTriangleAligned()
-//   }, 10)
-//   alignmentCheckTimeout
-// }
-// const handleFinalAngle = ({ gearIndex, currentAngle, count }) => {
-//   finalAngles.value[gearIndex] = currentAngle
-//   gearCounts.value[gearIndex] = count
-//   gearIndexs.value[gearIndex] = gearIndex
-//   console.log("VALOR DEL GEAR INDEX: =============>>>> " + gearIndex)
-
-//   const dientesActual = gearTeeth.value[gearIndex + 1] // gearIndex comienza en 1
-//   const mcmTotal = lcmArray(gearTeeth.value)
-//   const vueltasNecesarias = mcmTotal / dientesActual
-
-//   rotationCount.value = count
-//   console.log(`⚙️ Gear ${gearIndex}: vueltas = ${count}, necesarias = ${vueltasNecesarias}`)
-//   Swal.fire({
-//     title: `⚙️ Engranaje ${gearIndex}`,
-//     html: `
-//     <p><strong>Vueltas dadas:</strong> ${count}</p>
-//     <p><strong>Vueltas necesarias:</strong> ${vueltasNecesarias}</p>
-//   `,
-//     icon: 'info',
-//     confirmButtonText: 'Continuar',
-//     allowOutsideClick: false,
-//     allowEscapeKey: false
-//   })
-
-
-//   if (count === vueltasNecesarias) {
-//     haDadoVuelta.value = true
-//     restartEverything()
-//   }
-
-//   clearTimeout(alignmentCheckTimeout)
-//   alignmentCheckTimeout = setTimeout(() => {
-//     checkIfTriangleAligned()
-//   }, 10)
-// }
 const handleFinalAngle = ({ gearIndex, currentAngle, count }) => {
   finalAngles.value[gearIndex] = currentAngle
   gearCounts.value[gearIndex] = count
@@ -311,28 +291,6 @@ function lcm(a, b) {
 function lcmArray(arr) {
   return arr.reduce((acc, val) => lcm(acc, val))
 }
-
-watch(gearTeeth, (newTeeth) => {
-  console.log("Cantidad de dientes actualizada:", newTeeth)
-
-  const todosValidos = newTeeth.every(n => n > 0)
-  if (todosValidos) {
-    const mcm = lcmArray(newTeeth)
-    console.log("MCM:", mcm)
-
-    // Validación: el MCM debe ser mayor que el más grande para ser útil
-    mcmValido.value = mcm > Math.max(...newTeeth)
-
-    if (mcmValido.value) {
-      console.log("MCM válido entre los engranajes.")
-    } else {
-      console.warn("Los engranajes no tienen un MCM útil. Considera ajustar los dientes.")
-    }
-  } else {
-    mcmValido.value = false
-    console.warn("Todos los engranajes deben tener más de 0 dientes.")
-  }
-})
 
 const velocidad = ref(1)
 
